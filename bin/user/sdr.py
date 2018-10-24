@@ -1227,7 +1227,23 @@ class LaCrosseTX141THBv2Packet(Packet):
         pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
         pkt = Packet.add_identifiers(pkt, sensor_id, LaCrosseTX141THBv2Packet.__name__)
         return pkt
+  
+class LaCrosseTX141Bv2Packet(Packet):
 
+    # {"time" : "2018-10-24 20:01:28", "model" : "LaCrosse TX141-Bv2 sensor", "id" : 117, "temperature_C" : 5.400, "battery" : "OK", "test" : "No"}\n']
+
+    IDENTIFIER = "LaCrosse TX141-Bv2 sensor"
+
+    @staticmethod
+    def parse_json(obj):
+        pkt = dict()
+        pkt['dateTime'] = Packet.parse_time(obj.get('time'))
+        pkt['usUnits'] = weewx.US
+        sensor_id = obj.get('id')
+        pkt['temperature'] = Packet.get_float(obj, 'temperature')
+        pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
+        pkt = Packet.add_identifiers(pkt, sensor_id, LaCrosseTX141Bv2Packet.__name__)
+        return pkt
 
 class LaCrosseTXPacket(Packet):
 
@@ -1748,6 +1764,7 @@ class PacketFactory(object):
         HidekiWindPacket,
         HidekiRainPacket,
         LaCrosseWSPacket,
+        LaCrosseTX141Bv2Packet,
         LaCrosseTX141THBv2Packet,
         LaCrosseTXPacket,
         RubicsonTempPacket,
