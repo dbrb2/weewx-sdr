@@ -489,6 +489,24 @@ class Acurite5n1Packet(Packet):
         return Acurite.insert_ids(pkt, Acurite5n1Packet.__name__)
 
 
+class Acurite609TXCPacket(Packet):
+    # 2017-03-20: Acurite 606TXC Temperature Sensor
+    # {"time" : "2018-10-05 15:21:57", "model" : "Acurite 609TXC Sensor", "id" : 103, "battery" : "OK", "status" : 1, "temperature_C" : 19.400, "humidity" : 68}
+
+    IDENTIFIER = "Acurite 609TXC Sensor"
+
+    @staticmethod
+    def parse_json(obj):
+        pkt = dict()
+        pkt['dateTime'] = Packet.parse_time(obj.get('time'))
+        pkt['usUnits'] = weewx.METRIC
+        sensor_id = obj.get('id')
+        pkt['temperature'] = Packet.get_float(obj, 'temperature_C')
+        pkt['humidity'] = Packet.get_float(obj, 'humidity')
+        pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
+        pkt = Packet.add_identifiers(pkt, sensor_id, Acurite609TXCPacket.__name__)
+        return pkt
+
 class Acurite606TXPacket(Packet):
     # 2017-03-20: Acurite 606TX Temperature Sensor
     # {"time" : "2017-03-04 16:18:12", "model" : "Acurite 606TX Sensor", "id" : 48, "battery" : "OK", "temperature_C" : -1.100}
@@ -1227,7 +1245,23 @@ class LaCrosseTX141THBv2Packet(Packet):
         pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
         pkt = Packet.add_identifiers(pkt, sensor_id, LaCrosseTX141THBv2Packet.__name__)
         return pkt
+  
+class LaCrosseTX141Bv2Packet(Packet):
 
+    # {"time" : "2018-10-24 20:01:28", "model" : "LaCrosse TX141-Bv2 sensor", "id" : 117, "temperature_C" : 5.400, "battery" : "OK", "test" : "No"}\n']
+
+    IDENTIFIER = "LaCrosse TX141-Bv2 sensor"
+
+    @staticmethod
+    def parse_json(obj):
+        pkt = dict()
+        pkt['dateTime'] = Packet.parse_time(obj.get('time'))
+        pkt['usUnits'] = weewx.US
+        sensor_id = obj.get('id')
+        pkt['temperature'] = Packet.get_float(obj, 'temperature_C')
+        pkt['battery'] = 0 if obj.get('battery') == 'OK' else 1
+        pkt = Packet.add_identifiers(pkt, sensor_id, LaCrosseTX141Bv2Packet.__name__)
+        return pkt
 
 class LaCrosseTXPacket(Packet):
 
@@ -1732,6 +1766,7 @@ class PacketFactory(object):
         AcuriteTowerPacket,
         Acurite5n1Packet,
         Acurite606TXPacket,
+	Acurite609TXPacket,
         Acurite986Packet,
         AcuriteLightningPacket,
         Acurite00275MPacket,
@@ -1748,6 +1783,7 @@ class PacketFactory(object):
         HidekiWindPacket,
         HidekiRainPacket,
         LaCrosseWSPacket,
+        LaCrosseTX141Bv2Packet,
         LaCrosseTX141THBv2Packet,
         LaCrosseTXPacket,
         RubicsonTempPacket,
